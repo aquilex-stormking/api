@@ -1,20 +1,22 @@
+
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const { route } = require("./routes");
-const key1 = "$2b$10$a5wk2P4SCqiyJI3txonFd.otYX7iM8SguharNVNU9EMPKgv6XjCXa";
+require('dotenv').config();
 
 //settings
-
 app.set("port", process.env.PORT || 3000);
 app.set("json spaces", 2);
 //middlewares
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+// console.log(process.env.KEY);
 app.use((req, res, next) => {
-  const {key} = req.query.key;
-  if(key==key1){
+  const {key} = req.query;
+  
+  if(key==process.env.KEY){
         next();
   }else{
         res.status(403).json({ error: "this key invalid" });
@@ -22,7 +24,7 @@ app.use((req, res, next) => {
   });
 
 //routes
-app.use(require("./routes/index"));
+// app.use(require("./routes/index"));
 app.use("/api/weather", require("./routes/weather"));
 app.use("/api/users", require("./routes/users"));
 
